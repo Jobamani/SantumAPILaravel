@@ -1,18 +1,18 @@
 <?php
 
-
-
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use\Illuminate\Support\Facades\Validator;
-use\Illuminate\Support\Facades\Auth;
-use APP\Models\User;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
     public function signup(Request $request){
-        $validateUser = Validator::make(
+        
+        $validateUser = \Validator::make(
             $request->all(),
             [
                 'name' =>'required',
@@ -20,21 +20,20 @@ class AuthController extends Controller
                 'password'=> 'required',
             ]
             
-
             );
             //if validation fails
             if($validateUser->fails()){
                 return response()->json([
                     'status' =>false,
                     'message'=>'validation Error',
-                    'errors'=>$validateUser->error()->all()
+                    'errors'=>$validateUser->errors()
                 ],401);
             }
             //if validation sucess it will show user data, eliqoent method
             $user = User::create([
                 'name'=> $request->name,
                 'email'=> $request->email,
-                'passowrd'=> $request->password,
+                'password'=> $request->password,
             ]);
 
             return response()->json([
@@ -67,7 +66,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' =>true,
                     'message'=>'User Logged in Successfully',
-                    'token'=> $authuser->createToken("API Token")->plainTextToken,
+                    'token'=> $u=authuser->createToken("API Token")->plainTextToken,
                     'token_type'=>'bearer'
                 ],200); 
             }else{
@@ -92,5 +91,3 @@ class AuthController extends Controller
 
     }
 }
-
-
